@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+          <meta charset="UTF-8">
+        </head>{% load static %}
+        
+        <meta name = "viewport" content = "width=device-width, initial-scale=1,0">
+        <title>Flashcards</title>
+        <link rel="stylesheet" href="{% static 'FlashApp/styles.css' %}">
+    </head>
+    <body>
+        <div class = "container">
+            <div class="view-options">
+                <button class="list-view active">View as list</button>
+                <button class="object-view">View as objects</button>
+            </div>
+
+            <div class="create-flashcard">
+                <a href="{% url 'create_flashcard' %}"><button>Create FlashCard</button></a>
+            </div>
+
+            <div class="flashcard-list">
+                {% for flashcard in flashcards %}
+                <div class="flashcard">
+                    <div style = "display: flex; flex-direction: row; justify-content: space-between;"><h3>{{ flashcard.title }}</h3>
+                    <form action="{% url 'delete_flashcard' flashcard.id %}" method="post">
+                        {% csrf_token %}
+                    <button type="submit">
+                        Delete
+                    </button>
+                </form></div>
+                    <p>{{ flashcard.front_side }}</p>
+                    <p>{{ flashcard.back_side }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="flashcard-grid" style="display: none;">
+                {% for flashcard in flashcards %}
+                <div class="flashcard" style = "display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                    <h3>{{ flashcard.title }}</h3>
+                    <p>{{ flashcard.front_side }}</p>
+                    <p>{{ flashcard.back_side }}</p>
+                    </div>
+                    <div style = "display: flex; flex-direction: row; justify-content: flex-end;">
+                        <form action="{% url 'delete_flashcard' flashcard.id %}" method="post">
+                            {% csrf_token %}
+                        <button type="submit">
+                            Delete
+                        </button>
+                    </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            const listViewBtn = document.querySelector('.list-view');
+            const objectViewBtn = document.querySelector('.object-view');
+            const flashcardList = document.querySelector('.flashcard-list');
+            const flashcardGrid = document.querySelector('.flashcard-grid');
+
+            listViewBtn.addEventListener('click',()=>{
+                listViewBtn.classList.add('active');
+                objectViewBtn.classList.remove('active');
+                flashcardList.style.display = 'block';
+                flashcardGrid.style.display='none';
+            });
+
+            objectViewBtn.addEventListener('click', ()=>{
+                objectViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+                flashcardList.style.display = 'none';
+                flashcardGrid.style.display = 'grid';
+            });
+        </script>
+    </body>
+</html>
